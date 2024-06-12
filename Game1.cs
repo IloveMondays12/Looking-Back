@@ -23,12 +23,14 @@ namespace Looking_Back
         Screen screen;
         MouseState mouseState;
         KeyboardState keyboardState;
-        Rectangle window, start, whiteMan, playerHealthBar;
+        Rectangle window, startBtnRect, whiteManRect, playerHealthBarRect;
         Vector2 playerSpeed, snakeSpeed;
+        Texture2D introScreenText, startBtnText, animationOneOne, animationOneTwo, animtionOneThree, animationOneFour;
         SoundEffect windOne, windTwo, windThree, windFour;
         SoundEffectInstance windOneInstance, windTwoInstance, windThreeInstance, windFourInstance;
         float snakeattackSpeed;
-        int walkAnimation, windNum = 1;
+        int walkAnimation, windNum = 1, introFade = 0, seconds = 0;
+        bool startAnimation, cobraAnimation, waterAnimation, walking, fade, ptIntro = false;
         List <int> enemyHealth = new List<int>();
         List <Rectangle> enemies = new List<Rectangle>();
         List<Rectangle> enemiesHealthBar = new List<Rectangle>();
@@ -46,9 +48,13 @@ namespace Looking_Back
             screen = Screen.Start;
             enemyHealth.Clear();
             window = new Rectangle(0, 0, 800, 600);
-            start = new Rectangle(350, 400, 100, 50);
+            startBtnRect = new Rectangle(300, 470, 180, 90);
+            _graphics.PreferredBackBufferHeight = window.Height;
+            _graphics.PreferredBackBufferWidth = window.Width;
             _graphics.ApplyChanges();
             base.Initialize();
+            windOneInstance.Play();
+            
         }
 
         protected override void LoadContent()
@@ -58,6 +64,8 @@ namespace Looking_Back
             windTwo = Content.Load<SoundEffect>("Wind (2)");
             windThree = Content.Load<SoundEffect>("Wind (3)");
             windFour = Content.Load<SoundEffect>("Wind (4)");
+            introScreenText = Content.Load<Texture2D>("Intro screen");
+            startBtnText = Content.Load<Texture2D>("Start button");
             windOneInstance = windOne.CreateInstance();
             windTwoInstance = windTwo.CreateInstance();
             windThreeInstance = windThree.CreateInstance();
@@ -69,27 +77,45 @@ namespace Looking_Back
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+            mouseState = Mouse.GetState();
             if (screen == Screen.Start)
             {
-                if (windFourInstance.State != SoundState.Playing && windNum == 1)
+                if (windNum == 1 && windOneInstance.State == SoundState.Stopped)
                 {
-                    windOne.Play();
                     windNum = 2;
+                    windTwoInstance.Play();
                 }
-                else if (windOneInstance.State != SoundState.Playing && windNum == 2)
+                else if(windNum == 2 && windTwoInstance.State == SoundState.Stopped)
                 {
-                    windTwo.Play();
                     windNum = 3;
+                    windThreeInstance.Play();
                 }
-                 else if (windTwoInstance.State != SoundState.Playing && windNum == 3)
+                else if (windNum == 3 && windThreeInstance.State == SoundState.Stopped)
                 {
-                    windThree.Play();
                     windNum = 4;
+                    windFourInstance.Play();
                 }
-                else if (windThreeInstance.State != SoundState.Playing && windNum == 4)
+                else if (windNum == 4 && windFourInstance.State == SoundState.Stopped)
                 {
-                    windFour.Play();
                     windNum = 1;
+                    windOneInstance.Play();
+                }
+                if (mouseState.LeftButton == ButtonState.Pressed && mouseState.X < 480 && mouseState.X > 300 && mouseState.Y > 470 && mouseState.Y < 560)
+                {
+                    fade = true;
+                    introFade++;
+                    if (introFade == 50)
+                    {
+                        screen = Screen.Animation;
+                    }
+                }
+                if (fade == true)
+                {
+                    introFade++;
+                    if (introFade == 50)
+                    {
+                        screen = Screen.Animation;
+                    }
                 }
             }
             if (screen == Screen.Main)
@@ -98,7 +124,10 @@ namespace Looking_Back
             }
             if (screen == Screen.Animation)
             {
+                if (ptIntro == false)
+                {
 
+                }
             }
             if (screen == Screen.Death)
             {
@@ -117,7 +146,9 @@ namespace Looking_Back
             _spriteBatch.Begin();
             if (screen == Screen.Start)
             {
-                //_spriteBatch.Draw(window, Color.AliceBlue);
+                _spriteBatch.Draw(introScreenText , window, Color.White* ((100f - (introFade * 2f)) / 100f));
+                _spriteBatch.Draw(startBtnText, new Rectangle (290,460, 200, 110), Color.Peru * ((100f - (introFade * 2f))/100f));
+                _spriteBatch.Draw(startBtnText, startBtnRect, Color.White * ((100f - (introFade * 2f))/100f));
             }
             if (screen == Screen.Main)
             {
