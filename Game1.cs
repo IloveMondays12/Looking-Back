@@ -25,11 +25,11 @@ namespace Looking_Back
         KeyboardState keyboardState;
         Rectangle window, startBtnRect, whiteManRect, playerHealthBarRect;
         Vector2 playerSpeed, snakeSpeed;
-        Texture2D introScreenText, startBtnText, animationOneOne, animationOneTwo, animtionOneThree, animationOneFour;
+        Texture2D introScreenText, startBtnText, animationOneOne, animationOneTwo, animationOneThree, animationOneFour, walkingOne, walingTwo, walkingThree;
         SoundEffect windOne, windTwo, windThree, windFour;
         SoundEffectInstance windOneInstance, windTwoInstance, windThreeInstance, windFourInstance;
         float snakeattackSpeed;
-        int walkAnimation, windNum = 1, introFade = 0, seconds = 0;
+        int walkAnimation = 0, windNum = 1, introFade = 0, seconds = 0;
         bool startAnimation, cobraAnimation, waterAnimation, walking, fade, ptIntro = false;
         List <int> enemyHealth = new List<int>();
         List <Rectangle> enemies = new List<Rectangle>();
@@ -66,6 +66,10 @@ namespace Looking_Back
             windFour = Content.Load<SoundEffect>("Wind (4)");
             introScreenText = Content.Load<Texture2D>("Intro screen");
             startBtnText = Content.Load<Texture2D>("Start button");
+            //animationOneOne = Content.Load<Texture2D>();
+            //animationOneTwo = Content.Load<Texture2D>();
+            //animationOneThree = Content.Load<Texture2D>();
+            //animationOneFour = Content.Load<Texture2D>();
             windOneInstance = windOne.CreateInstance();
             windTwoInstance = windTwo.CreateInstance();
             windThreeInstance = windThree.CreateInstance();
@@ -114,21 +118,46 @@ namespace Looking_Back
                     introFade++;
                     if (introFade == 50)
                     {
+                        introFade = 0;
                         screen = Screen.Animation;
                     }
                 }
             }
+
+
             if (screen == Screen.Main)
             {
-
-            }
-            if (screen == Screen.Animation)
-            {
+                //Add to top if all chapters and lower to start as you go down!
                 if (ptIntro == false)
                 {
 
                 }
+               
+                
+                
             }
+
+
+            if (screen == Screen.Animation)
+            {
+                if (ptIntro == false)
+                {
+                    if (seconds < 961)
+                    {
+                        ++seconds;
+                        if (seconds > 910)
+                        {
+                            introFade++;
+                        }
+                    }
+                    if (seconds == 961)
+                    {
+                        screen = Screen.Main;
+                    }
+                }
+            }
+
+
             if (screen == Screen.Death)
             {
 
@@ -140,7 +169,7 @@ namespace Looking_Back
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
@@ -150,13 +179,33 @@ namespace Looking_Back
                 _spriteBatch.Draw(startBtnText, new Rectangle (290,460, 200, 110), Color.Peru * ((100f - (introFade * 2f))/100f));
                 _spriteBatch.Draw(startBtnText, startBtnRect, Color.White * ((100f - (introFade * 2f))/100f));
             }
+
+
             if (screen == Screen.Main)
             {
-
+               
             }
+
+
             if (screen == Screen.Animation)
             {
+            //    if (seconds < 240)
+            //    {
+            //        _spriteBatch.Draw(animationOneOne, window, Color.White);
+            //    }
+            //    else if (seconds < 480)
+            //    {
+            //        _spriteBatch.Draw(animationOneTwo, window, Color.White);
+            //    }
+            //    else if (seconds < 720)
+            //    {
+            //        _spriteBatch.Draw(animationOneThree, window, Color.White);
+            //    }
+            //    else if (seconds <= 960)
+            //    {
+            //        _spriteBatch.Draw(animationOneFour, window, Color.White * ((100f - ((introFade * 2f)) / 100f)));
 
+            //    }
             }
             if (screen == Screen.Death)
             {
