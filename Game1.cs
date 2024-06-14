@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 
@@ -24,9 +25,10 @@ namespace Looking_Back
         MouseState mouseState;
         KeyboardState keyboardState;
         Rectangle window, startBtnRect, whiteManRect, playerHealthBarRect;
-        Vector2 playerSpeed, snakeSpeed;
-        Texture2D introScreenText, startBtnText, animationOneOne, animationOneTwo, animationOneThree, animationOneFour, walkingOne, walingTwo, walkingThree;
-        SoundEffect windOne, windTwo, windThree, windFour;
+        Vector2 playerSpeed, snakeSpeed, windowPosition;
+        Texture2D introScreenText, startBtnText, animationOneOne, animationOneTwo, animationOneThree, animationOneFour, walkingOne, walingTwo, walkingThree, stageOneBG;
+        SoundEffect windOne, windTwo, windThree, windFour, birds;
+        Song introSong;
         SoundEffectInstance windOneInstance, windTwoInstance, windThreeInstance, windFourInstance;
         float snakeattackSpeed;
         int walkAnimation = 0, windNum = 1, introFade = 0, seconds = 0;
@@ -49,6 +51,8 @@ namespace Looking_Back
             enemyHealth.Clear();
             window = new Rectangle(0, 0, 800, 600);
             startBtnRect = new Rectangle(300, 470, 180, 90);
+            playerSpeed = new Vector2(3, 5);
+            windowPosition = new Vector2(0, 0);
             _graphics.PreferredBackBufferHeight = window.Height;
             _graphics.PreferredBackBufferWidth = window.Width;
             _graphics.ApplyChanges();
@@ -64,12 +68,14 @@ namespace Looking_Back
             windTwo = Content.Load<SoundEffect>("Wind (2)");
             windThree = Content.Load<SoundEffect>("Wind (3)");
             windFour = Content.Load<SoundEffect>("Wind (4)");
+            birds = Content.Load<SoundEffect>("Birds");
+            introSong = Content.Load<Song>("Bill Withers - Ain't No Sunshine");
             introScreenText = Content.Load<Texture2D>("Intro screen");
             startBtnText = Content.Load<Texture2D>("Start button");
-            //animationOneOne = Content.Load<Texture2D>();
-            //animationOneTwo = Content.Load<Texture2D>();
-            //animationOneThree = Content.Load<Texture2D>();
-            //animationOneFour = Content.Load<Texture2D>();
+            animationOneOne = Content.Load<Texture2D>("Animation One One");
+            animationOneTwo = Content.Load<Texture2D>("Animation One Two");
+            animationOneThree = Content.Load<Texture2D>("Animation One Three");
+            animationOneFour = Content.Load<Texture2D>("Animation One Four");
             windOneInstance = windOne.CreateInstance();
             windTwoInstance = windTwo.CreateInstance();
             windThreeInstance = windThree.CreateInstance();
@@ -110,6 +116,7 @@ namespace Looking_Back
                     introFade++;
                     if (introFade == 50)
                     {
+                        
                         screen = Screen.Animation;
                     }
                 }
@@ -130,8 +137,9 @@ namespace Looking_Back
                 //Add to top if all chapters and lower to start as you go down!
                 if (ptIntro == false)
                 {
-
+                    
                 }
+
                
                 
                 
@@ -142,15 +150,24 @@ namespace Looking_Back
             {
                 if (ptIntro == false)
                 {
-                    if (seconds < 961)
+                    if (seconds < 901)
                     {
                         ++seconds;
-                        if (seconds > 910)
+                        if (seconds == 340)
+                        {
+                            birds.Play();
+                        }
+                        if (seconds == 450)
+                        {
+                            MediaPlayer.Play(introSong);
+                        }
+                        if (seconds > 850)
                         {
                             introFade++;
+                            MediaPlayer.Volume = ((100f - (introFade))/100);
                         }
                     }
-                    if (seconds == 961)
+                    if (seconds == 901)
                     {
                         screen = Screen.Main;
                     }
@@ -183,29 +200,32 @@ namespace Looking_Back
 
             if (screen == Screen.Main)
             {
-               
+               if (ptIntro == false)
+                {
+                    
+                }
             }
 
 
             if (screen == Screen.Animation)
             {
-            //    if (seconds < 240)
-            //    {
-            //        _spriteBatch.Draw(animationOneOne, window, Color.White);
-            //    }
-            //    else if (seconds < 480)
-            //    {
-            //        _spriteBatch.Draw(animationOneTwo, window, Color.White);
-            //    }
-            //    else if (seconds < 720)
-            //    {
-            //        _spriteBatch.Draw(animationOneThree, window, Color.White);
-            //    }
-            //    else if (seconds <= 960)
-            //    {
-            //        _spriteBatch.Draw(animationOneFour, window, Color.White * ((100f - ((introFade * 2f)) / 100f)));
+                if (seconds < 180)
+                {
+                    _spriteBatch.Draw(animationOneOne, window, Color.White);
+                }
+                else if (seconds < 420)
+                {
+                    _spriteBatch.Draw(animationOneTwo, window, Color.White);
+                }
+                else if (seconds < 660)
+                {
+                    _spriteBatch.Draw(animationOneThree, window, Color.White);
+                }
+                else if (seconds <= 900)
+                {
+                    _spriteBatch.Draw(animationOneFour, window, Color.White * ((100f - (introFade * 2f)) / 100f));
 
-            //    }
+                }
             }
             if (screen == Screen.Death)
             {
