@@ -25,13 +25,13 @@ namespace Looking_Back
         MouseState mouseState;
         KeyboardState keyboardState;
         Rectangle window, startBtnRect, whiteManRect, playerHealthBarRect;
-        Vector2 playerSpeed, snakeSpeed, windowPosition;
-        Texture2D introScreenText, startBtnText, animationOneOne, animationOneTwo, animationOneThree, animationOneFour, walkingOne, walingTwo, walkingThree, stageOneBG;
+        Vector2 playerSpeed, snakeSpeed;
+        Texture2D introScreenText, startBtnText, animationOneOne, animationOneTwo, animationOneThree, animationOneFour, walkingLeftOne, walkingLeftTwo, walkingLeftThree, walkingRightOne, walkingRightTwo, walkingRightThree, stageOneBG;
         SoundEffect windOne, windTwo, windThree, windFour, birds;
         Song introSong;
         SoundEffectInstance windOneInstance, windTwoInstance, windThreeInstance, windFourInstance;
-        float snakeattackSpeed;
-        int walkAnimation = 0, windNum = 1, introFade = 0, seconds = 0;
+        float snakeattackSpeed, gravitationalAcceleration = 0;
+        int walkAnimation = 0, windNum = 1, introFade = 0, seconds = 0, walkingAnimationStep = 0;
         bool startAnimation, cobraAnimation, waterAnimation, walking, fade, ptIntro = false;
         List <int> enemyHealth = new List<int>();
         List <Rectangle> enemies = new List<Rectangle>();
@@ -51,8 +51,8 @@ namespace Looking_Back
             enemyHealth.Clear();
             window = new Rectangle(0, 0, 800, 600);
             startBtnRect = new Rectangle(300, 470, 180, 90);
+            whiteManRect = new Rectangle(50, 450, 50, 100);
             playerSpeed = new Vector2(3, 5);
-            windowPosition = new Vector2(0, 0);
             _graphics.PreferredBackBufferHeight = window.Height;
             _graphics.PreferredBackBufferWidth = window.Width;
             _graphics.ApplyChanges();
@@ -76,6 +76,12 @@ namespace Looking_Back
             animationOneTwo = Content.Load<Texture2D>("Animation One Two");
             animationOneThree = Content.Load<Texture2D>("Animation One Three");
             animationOneFour = Content.Load<Texture2D>("Animation One Four");
+            walkingRightOne = Content.Load<Texture2D>("White man walking right(1)png");
+            //walkingRightTwo = Content.Load<Texture2D>("");
+            //walkingRightThree = Content.Load<Texture2D>("");
+            walkingLeftOne = Content.Load<Texture2D>("White man walking left(1)png");
+            //walkingRightTwo = Content.Load<Texture2D>("");
+            //walkingRightThree = Content.Load<Texture2D>("");
             windOneInstance = windOne.CreateInstance();
             windTwoInstance = windTwo.CreateInstance();
             windThreeInstance = windThree.CreateInstance();
@@ -88,6 +94,7 @@ namespace Looking_Back
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             mouseState = Mouse.GetState();
+            keyboardState = Keyboard.GetState();
             if (screen == Screen.Start)
             {
                 if (windNum == 1 && windOneInstance.State == SoundState.Stopped)
@@ -137,7 +144,31 @@ namespace Looking_Back
                 //Add to top if all chapters and lower to start as you go down!
                 if (ptIntro == false)
                 {
-                    
+                    if ((whiteManRect.X - window.X) >= 275 && (whiteManRect.X - window.X) <= 525)
+                    {
+                        if (keyboardState.IsKeyDown(Keys.D))
+                        {
+                            if (playerSpeed.X < 0)
+                            {
+                                playerSpeed.X = playerSpeed.X * -1;
+                            }
+                            window.X = (window.X + (int)playerSpeed.X);
+                            
+                        }
+                        if (keyboardState.IsKeyDown(Keys.A))
+                        {
+                            if (playerSpeed.X > 0)
+                            {
+                                playerSpeed.X = playerSpeed.X * -1;
+                            }
+                            window.X = (window.X + (int)playerSpeed.X);
+
+                        }
+                        if (keyboardState.IsKeyDown(Keys.None) && whiteManRect.Y == 450)
+                        {
+                            walkAnimation = 2;
+                        }
+                    }
                 }
 
                
@@ -202,7 +233,39 @@ namespace Looking_Back
             {
                if (ptIntro == false)
                 {
-                    
+                    _spriteBatch.Draw(stageOneBG, window, Color.White);
+                    if (playerSpeed.X > 0)
+                    {
+                        if (walkAnimation == 1)
+                        {
+
+                        }
+                        if (walkAnimation == 2)
+                        {
+
+                        }
+                        if (walkAnimation == 3)
+                        {
+
+                        }
+
+                    }
+                    if (playerSpeed.X < 0)
+                    {
+                        if (walkAnimation == 1)
+                        {
+
+                        }
+                        if (walkAnimation == 2)
+                        {
+
+                        }
+                        if (walkAnimation == 3)
+                        {
+
+                        }
+
+                    }
                 }
             }
 
