@@ -141,6 +141,7 @@ namespace Looking_Back
                     {
                         introFade = 0;
                         screen = Screen.Animation;
+                        seconds = 0;
                     }
                 }
             }
@@ -168,11 +169,11 @@ namespace Looking_Back
                         }
 
                     }
-                    if (keyboardState.IsKeyDown(Keys.None) && whiteManRect.Y == 400)
+                    if (keyboardState.GetPressedKeyCount() == 0 && whiteManRect.Y == 400)
                     {
                         walkAnimation = 2;
                     }
-                    else
+                    else if (whiteManRect.Y == 400)
                     {
                         seconds++;
                         if ((seconds % 20) == 0)
@@ -184,10 +185,14 @@ namespace Looking_Back
                             }
                         }
                     }
-                    if ((whiteManRect.X - window.X) >= 275 && (whiteManRect.X - window.X) <= 525 && !keyboardState.IsKeyDown(Keys.None))
+                    if ((whiteManRect.X - window.X) >= 340 && (whiteManRect.X - (window.X+3200)) <= 400 && keyboardState.GetPressedKeyCount() != 0)
                     {
                         window.X = (window.X + (int)playerSpeed.X);
 
+                    }
+                    else if (keyboardState.GetPressedKeyCount() != 0)
+                    {
+                        whiteManRect.X = whiteManRect.X + (int)playerSpeed.X; 
                     }
                     
                     if (keyboardState.IsKeyDown(Keys.W) && whiteManRect.Y == 400)
