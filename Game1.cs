@@ -27,12 +27,12 @@ namespace Looking_Back
         Rectangle window, startBtnRect, whiteManRect, playerHealthBarRect;
         Vector2 playerSpeed, snakeSpeed;
         Texture2D introScreenText, startBtnText, animationOneOne, animationOneTwo, animationOneThree, 
-        animationOneFour, walkingLeftOne, walkingLeftTwo, walkingLeftThree, walkingRightOne, walkingRightTwo, walkingRightThree, stageOneBG, jumpingRight, jumpingLeft;
+        animationOneFour, walkingLeftOne, walkingLeftTwo, walkingLeftThree, walkingRightOne, walkingRightTwo, walkingRightThree, stageOneBG, jumpingRight, jumpingLeft, fillerText;
         SoundEffect windOne, windTwo, windThree, windFour, birds;
         Song introSong;
         SoundEffectInstance windOneInstance, windTwoInstance, windThreeInstance, windFourInstance;
         float snakeattackSpeed, gravitationalAcceleration = 0;
-        int walkAnimation = 0, windNum = 1, introFade = 0, seconds = 0, walkingAnimationStep = 0;
+        int walkAnimation = 0, windNum = 1, introFade = 0, seconds = 0, walkingAnimationStep = 2;
         bool startAnimation, cobraAnimation, waterAnimation, walking, fade, ptIntro = false;
         List <int> enemyHealth = new List<int>();
         List <Rectangle> enemies = new List<Rectangle>();
@@ -52,8 +52,8 @@ namespace Looking_Back
             enemyHealth.Clear();
             window = new Rectangle(0, 0, 800, 600);
             startBtnRect = new Rectangle(300, 470, 180, 90);
-            whiteManRect = new Rectangle(50, 450, 50, 100);
-            playerSpeed = new Vector2(3, 20);
+            whiteManRect = new Rectangle(50, 400, 60, 90);
+            playerSpeed = new Vector2(3 , 45);
             _graphics.PreferredBackBufferHeight = window.Height;
             _graphics.PreferredBackBufferWidth = window.Width;
             _graphics.ApplyChanges();
@@ -78,13 +78,15 @@ namespace Looking_Back
             animationOneThree = Content.Load<Texture2D>("Animation One Three");
             animationOneFour = Content.Load<Texture2D>("Animation One Four");
             walkingRightOne = Content.Load<Texture2D>("White man walking right(1)png");
-            //walkingRightTwo = Content.Load<Texture2D>("");
-            //walkingRightThree = Content.Load<Texture2D>("");
+            walkingRightTwo = Content.Load<Texture2D>("White man walking (2) right");
+            fillerText = Content.Load<Texture2D>("White man walking (2) right");
+            walkingRightThree = Content.Load<Texture2D>("White man walking right(3)");
             walkingLeftOne = Content.Load<Texture2D>("White man walking left(1)png");
-            //walkingRightTwo = Content.Load<Texture2D>("");
-            //walkingRightThree = Content.Load<Texture2D>("");
+            walkingLeftTwo = Content.Load<Texture2D>("White man walking (2) left");
+            walkingLeftThree = Content.Load<Texture2D>("White man walking left(3)");
             //jumpingRight = Content.Load<Texture2D>("White man walking left(1)png");
             //jumpingLeft = Content.Load<Texture2D>("White man walking left(1)png");
+            stageOneBG = Content.Load<Texture2D>("Animation One Four");
             windOneInstance = windOne.CreateInstance();
             windTwoInstance = windTwo.CreateInstance();
             windThreeInstance = windThree.CreateInstance();
@@ -94,10 +96,12 @@ namespace Looking_Back
 
         protected override void Update(GameTime gameTime)
         {
+            
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             mouseState = Mouse.GetState();
             keyboardState = Keyboard.GetState();
+            Window.Title = mouseState.X + "," + mouseState.Y;
             if (screen == Screen.Start)
             {
                 if (windNum == 1 && windOneInstance.State == SoundState.Stopped)
@@ -148,53 +152,56 @@ namespace Looking_Back
                 //Add to top if all chapters and lower to start as you go down!
                 if (ptIntro == false)
                 {
-                    
-                    if ((whiteManRect.X - window.X) >= 275 && (whiteManRect.X - window.X) <= 525)
+                    if (keyboardState.IsKeyDown(Keys.D))
                     {
-                        if (keyboardState.IsKeyDown(Keys.D))
+                        if (playerSpeed.X < 0)
                         {
-                            if (playerSpeed.X < 0)
-                            {
-                                playerSpeed.X = playerSpeed.X * -1;
-                            }
-                            window.X = (window.X + (int)playerSpeed.X);
-                            
+                            playerSpeed.X = playerSpeed.X * -1;
                         }
-                        if (keyboardState.IsKeyDown(Keys.A))
-                        {
-                            if (playerSpeed.X > 0)
-                            {
-                                playerSpeed.X = playerSpeed.X * -1;
-                            }
-                            window.X = (window.X + (int)playerSpeed.X);
 
-                        }
-                        if (keyboardState.IsKeyDown(Keys.None) && whiteManRect.Y == 450)
+                    }
+                    if (keyboardState.IsKeyDown(Keys.A))
+                    {
+                        if (playerSpeed.X > 0)
                         {
-                            walkAnimation = 2;
+                            playerSpeed.X = playerSpeed.X * -1;
                         }
-                        else
+
+                    }
+                    if (keyboardState.IsKeyDown(Keys.None) && whiteManRect.Y == 400)
+                    {
+                        walkAnimation = 2;
+                    }
+                    else
+                    {
+                        seconds++;
+                        if ((seconds % 20) == 0)
                         {
-                            seconds++;
-                            if ((seconds % 20) == 0)
+                            walkAnimation++;
+                            if (walkAnimation == 5)
                             {
-                                walkAnimation++;
-                                if (walkAnimation == 5)
-                                {
-                                    walkAnimation = 1;
-                                }
+                                walkAnimation = 1;
                             }
                         }
-                        
                     }
-                    if (keyboardState.IsKeyDown(Keys.W) && whiteManRect.Y == 450)
+                    if ((whiteManRect.X - window.X) >= 275 && (whiteManRect.X - window.X) <= 525 && !keyboardState.IsKeyDown(Keys.None))
+                    {
+                        window.X = (window.X + (int)playerSpeed.X);
+
+                    }
+                    
+                    if (keyboardState.IsKeyDown(Keys.W) && whiteManRect.Y == 400)
                     {
                         whiteManRect.Y = whiteManRect.Y + (int)playerSpeed.Y;
                     }
-                    if (whiteManRect.Y != 450)
+                    if (whiteManRect.Y != 400 && whiteManRect.Y > 400)
                     {
-                        playerSpeed.Y = playerSpeed.Y - (float)(9.8/60);
+                        playerSpeed.Y = playerSpeed.Y - 1;
                         whiteManRect.Y = (int)(whiteManRect.Y + playerSpeed.Y);
+                    }
+                    if (whiteManRect.Y < 400)
+                    {
+                        whiteManRect.Y = 400;
                     }
                     
                 }
@@ -262,24 +269,27 @@ namespace Looking_Back
             {
                if (ptIntro == false)
                 {
-                    if (whiteManRect.Y == 450)
+                    _spriteBatch.Draw(stageOneBG, window, Color.White);
+
+                    /*_spriteBatch.Draw(fillerText, whiteManRect, Color.White);*///alanna
+
+                    if (whiteManRect.Y == 400)
                     {
-                        _spriteBatch.Draw(stageOneBG, window, Color.White);
                         if (playerSpeed.X > 0)
                         {
                             if (walkAnimation == 1)
                             {
                                 _spriteBatch.Draw(walkingRightOne, whiteManRect, Color.White);
                             }
-                            if (walkAnimation == 2)
+                            else if (walkAnimation == 2)
                             {
                                 _spriteBatch.Draw(walkingRightTwo, whiteManRect, Color.White);
                             }
-                            if (walkAnimation == 3)
+                            else if (walkAnimation == 3)
                             {
                                 _spriteBatch.Draw(walkingRightThree, whiteManRect, Color.White);
                             }
-                            if (walkAnimation == 4)
+                            else if (walkAnimation == 4)
                             {
                                 _spriteBatch.Draw(walkingRightTwo, whiteManRect, Color.White);
                             }
@@ -291,15 +301,15 @@ namespace Looking_Back
                             {
                                 _spriteBatch.Draw(walkingLeftOne, whiteManRect, Color.White);
                             }
-                            if (walkAnimation == 2)
+                            else if (walkAnimation == 2)
                             {
                                 _spriteBatch.Draw(walkingLeftTwo, whiteManRect, Color.White);
                             }
-                            if (walkAnimation == 3)
+                            else if (walkAnimation == 3)
                             {
                                 _spriteBatch.Draw(walkingLeftThree, whiteManRect, Color.White);
                             }
-                            if (walkAnimation == 4)
+                            else if (walkAnimation == 4)
                             {
                                 _spriteBatch.Draw(walkingLeftTwo, whiteManRect, Color.White);
                             }

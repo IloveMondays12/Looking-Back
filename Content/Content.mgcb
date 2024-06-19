@@ -97,6 +97,30 @@
 /processorParam:TextureFormat=Color
 /build:Start button.jpg
 
+#begin White man walking (2) left.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:White man walking (2) left.png
+
+#begin White man walking (2) right.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:White man walking (2) right.png
+
 #begin White man walking left(1)png.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -109,6 +133,18 @@
 /processorParam:TextureFormat=Color
 /build:White man walking left(1)png.png
 
+#begin White man walking left(3).png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:White man walking left(3).png
+
 #begin White man walking right(1)png.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -120,6 +156,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:White man walking right(1)png.png
+
+#begin White man walking right(3).png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:White man walking right(3).png
 
 #begin Wind (1).wav
 /importer:WavImporter
