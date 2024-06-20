@@ -149,13 +149,12 @@ namespace Looking_Back
 
             if (screen == Screen.Main)
             {
-                seconds++;
                 //Add to top if all chapters and lower to start as you go down!
                 if (ptIntro == false)
                 {
                     if (keyboardState.IsKeyDown(Keys.D))
                     {
-                        if (playerSpeed.X < 0)
+                        if (playerSpeed.X > 0)
                         {
                             playerSpeed.X = playerSpeed.X * -1;
                         }
@@ -163,7 +162,7 @@ namespace Looking_Back
                     }
                     if (keyboardState.IsKeyDown(Keys.A))
                     {
-                        if (playerSpeed.X > 0)
+                        if (playerSpeed.X < 0)
                         {
                             playerSpeed.X = playerSpeed.X * -1;
                         }
@@ -185,14 +184,14 @@ namespace Looking_Back
                             }
                         }
                     }
-                    if ((whiteManRect.X - window.X) >= 340 && (whiteManRect.X - (window.X+3200)) <= 400 && keyboardState.GetPressedKeyCount() != 0)
+                    if ((whiteManRect.X - window.X) >= 340 && (whiteManRect.X - (window.X+3200)) <= -400 && keyboardState.GetPressedKeyCount() != 0)
                     {
                         window.X = (window.X + (int)playerSpeed.X);
 
                     }
                     else if (keyboardState.GetPressedKeyCount() != 0)
                     {
-                        whiteManRect.X = whiteManRect.X + (int)playerSpeed.X; 
+                        whiteManRect.X = whiteManRect.X - (int)playerSpeed.X; 
                     }
                     
                     if (keyboardState.IsKeyDown(Keys.W) && whiteManRect.Y == 400)
@@ -280,7 +279,7 @@ namespace Looking_Back
 
                     if (whiteManRect.Y == 400)
                     {
-                        if (playerSpeed.X > 0)
+                        if (playerSpeed.X < 0)
                         {
                             if (walkAnimation == 1)
                             {
@@ -300,7 +299,7 @@ namespace Looking_Back
                             }
 
                         }
-                        if (playerSpeed.X < 0)
+                        if (playerSpeed.X > 0)
                         {
                             if (walkAnimation == 1)
                             {
