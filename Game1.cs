@@ -184,17 +184,26 @@ namespace Looking_Back
                             }
                         }
                     }
-                    if ((whiteManRect.X - window.X) >= 340 && (whiteManRect.X - (window.X+3200)) <= -400 && keyboardState.GetPressedKeyCount() != 0)
-                    {
-                        window.X = (window.X + (int)playerSpeed.X);
+                        if ((whiteManRect.X - window.X) >= 340 && (whiteManRect.X - (window.X + 3200)) <= -400 && keyboardState.GetPressedKeyCount() != 0)
+                        {
+                            window.X = (window.X + (int)playerSpeed.X);
 
-                    }
-                    else if (keyboardState.GetPressedKeyCount() != 0)
-                    {
-                        whiteManRect.X = whiteManRect.X - (int)playerSpeed.X; 
-                    }
+                        }
+                        else if (keyboardState.GetPressedKeyCount() != 0)
+                        {
+                            whiteManRect.X = whiteManRect.X - (int)playerSpeed.X;
+                        }
                     
-                    if (keyboardState.IsKeyDown(Keys.W) && whiteManRect.Y == 400)
+                    if (whiteManRect.X <= window.X)
+                    {
+                        whiteManRect.X = whiteManRect.X + (int)(playerSpeed.X);
+                    }
+                    if (whiteManRect.X >= (window.X + 3200))
+                    {
+                        whiteManRect.X = whiteManRect.X + (int)(playerSpeed.X);
+                    }
+
+                            if (keyboardState.IsKeyDown(Keys.W) && whiteManRect.Y == 400)
                     {
                         whiteManRect.Y = whiteManRect.Y + (int)playerSpeed.Y;
                     }
