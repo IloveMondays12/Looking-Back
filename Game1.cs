@@ -32,7 +32,7 @@ namespace Looking_Back
         Song introSong;
         SoundEffectInstance windOneInstance, windTwoInstance, windThreeInstance, windFourInstance;
         float snakeattackSpeed, gravitationalAcceleration = 0;
-        int walkAnimation = 0, windNum = 1, introFade = 0, seconds = 0, walkingAnimationStep = 2;
+        int walkAnimation = 0, windNum = 1, introFade = 0, seconds = 0, walkingAnimationStep = 2, groundLevel = 400;
         bool startAnimation, cobraAnimation, waterAnimation, walking, fade, ptIntro = false;
         List <int> enemyHealth = new List<int>();
         List <Rectangle> enemies = new List<Rectangle>();
@@ -52,8 +52,8 @@ namespace Looking_Back
             enemyHealth.Clear();
             window = new Rectangle(0, 0, 800, 600);
             startBtnRect = new Rectangle(300, 470, 180, 90);
-            whiteManRect = new Rectangle(50, 400, 60, 90);
-            playerSpeed = new Vector2(3 , 45);
+            whiteManRect = new Rectangle(50, 400, 80, 120);
+            playerSpeed = new Vector2(2 , 20);
             _graphics.PreferredBackBufferHeight = window.Height;
             _graphics.PreferredBackBufferWidth = window.Width;
             _graphics.ApplyChanges();
@@ -84,8 +84,8 @@ namespace Looking_Back
             walkingLeftOne = Content.Load<Texture2D>("White man walking left(1)png");
             walkingLeftTwo = Content.Load<Texture2D>("White man walking (2) left");
             walkingLeftThree = Content.Load<Texture2D>("White man walking left(3)");
-            //jumpingRight = Content.Load<Texture2D>("White man walking left(1)png");
-            //jumpingLeft = Content.Load<Texture2D>("White man walking left(1)png");
+            jumpingRight = Content.Load<Texture2D>("White man jumping right");
+            jumpingLeft = Content.Load<Texture2D>("White man jumping left");
             stageOneBG = Content.Load<Texture2D>("Animation One Four");
             windOneInstance = windOne.CreateInstance();
             windTwoInstance = windTwo.CreateInstance();
@@ -172,7 +172,7 @@ namespace Looking_Back
                     {
                         walkAnimation = 2;
                     }
-                    else if (whiteManRect.Y == 400)
+                    else if (whiteManRect.Y == groundLevel)
                     {
                         seconds++;
                         if ((seconds % 20) == 0)
@@ -189,7 +189,7 @@ namespace Looking_Back
                             window.X = (window.X + (int)playerSpeed.X);
 
                         }
-                        else if (keyboardState.GetPressedKeyCount() != 0)
+                        else if (keyboardState.IsKeyDown(Keys.D) || keyboardState.IsKeyDown(Keys.A))
                         {
                             whiteManRect.X = whiteManRect.X - (int)playerSpeed.X;
                         }
@@ -203,18 +203,19 @@ namespace Looking_Back
                         whiteManRect.X = whiteManRect.X + (int)(playerSpeed.X);
                     }
 
-                            if (keyboardState.IsKeyDown(Keys.W) && whiteManRect.Y == 400)
+                    if (keyboardState.IsKeyDown(Keys.W) && whiteManRect.Y == 400)
                     {
-                        whiteManRect.Y = whiteManRect.Y + (int)playerSpeed.Y;
+                        whiteManRect.Y = whiteManRect.Y - (int)playerSpeed.Y;
                     }
-                    if (whiteManRect.Y != 400 && whiteManRect.Y > 400)
+                    if (whiteManRect.Y != groundLevel && whiteManRect.Y < groundLevel)
                     {
                         playerSpeed.Y = playerSpeed.Y - 1;
-                        whiteManRect.Y = (int)(whiteManRect.Y + playerSpeed.Y);
+                        whiteManRect.Y = (int)(whiteManRect.Y - playerSpeed.Y);
                     }
-                    if (whiteManRect.Y < 400)
+                    if (whiteManRect.Y > groundLevel)
                     {
-                        whiteManRect.Y = 400;
+                        whiteManRect.Y = groundLevel;
+                        playerSpeed.Y = 20;
                     }
                     
                 }
@@ -286,7 +287,7 @@ namespace Looking_Back
 
                     /*_spriteBatch.Draw(fillerText, whiteManRect, Color.White);*///alanna
 
-                    if (whiteManRect.Y == 400)
+                    if (whiteManRect.Y == groundLevel)
                     {
                         if (playerSpeed.X < 0)
                         {
@@ -331,11 +332,11 @@ namespace Looking_Back
                     }
                     else
                     {
-                        if (playerSpeed.X > 0)
+                        if (playerSpeed.X < 0)
                         {
                             _spriteBatch.Draw(jumpingRight, whiteManRect, Color.White);
                         }
-                        else if (playerSpeed.X < 0)
+                        else if (playerSpeed.X > 0)
                         {
                             _spriteBatch.Draw(jumpingLeft, whiteManRect, Color.White);
                         }
