@@ -4,7 +4,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
-using System.Collections.Generic;
+//using System.Collections.Generic;
+//using System.Drawing;
+//Was saying it was ambiguous because this and microsoft xna had same shit?
 
 namespace Looking_Back
 {
@@ -23,20 +25,34 @@ namespace Looking_Back
         Random generator = new Random();
         Screen screen;
         MouseState mouseState;
+
         KeyboardState keyboardState;
-        Rectangle window, startBtnRect, whiteManRect, playerHealthBarRect;
+
+        Rectangle window, startBtnRect, whiteManRect, playerHealthBarRect, wButtonRect, tarpRect, bridgeRect, crateRect;
+
         Vector2 playerSpeed, snakeSpeed;
+
         Texture2D introScreenText, startBtnText, animationOneOne, animationOneTwo, animationOneThree, 
-        animationOneFour, walkingLeftOne, walkingLeftTwo, walkingLeftThree, walkingRightOne, walkingRightTwo, walkingRightThree, stageOneBG, jumpingRight, jumpingLeft, fillerText;
+        animationOneFour, walkingLeftOne, walkingLeftTwo, walkingLeftThree, walkingRightOne, walkingRightTwo, walkingRightThree, stageOneBGone, stageOneBGtwo, 
+        jumpingRight, jumpingLeft, wButtonText, tarpText, bridgeText, crateText;
+       
         SoundEffect windOne, windTwo, windThree, windFour, birds;
+
         Song introSong;
+
         SoundEffectInstance windOneInstance, windTwoInstance, windThreeInstance, windFourInstance;
+
+        String stageOneBGstate;
+
         float snakeattackSpeed, gravitationalAcceleration = 0;
-        int walkAnimation = 0, windNum = 1, introFade = 0, seconds = 0, gameTimer = 0, walkingAnimationStep = 2, groundLevel = 470;
-        bool startAnimation, cobraAnimation, waterAnimation, walking, fade, ptIntro = false;
-        List <int> enemyHealth = new List<int>();
-        List <Rectangle> enemies = new List<Rectangle>();
-        List<Rectangle> enemiesHealthBar = new List<Rectangle>();
+
+        int walkAnimation = 0, windNum = 1, introFade = 0, seconds = 0, gameTimer = 0, walkingAnimationStep = 2, groundLevel = 590, previousGroundLevel = 590;
+
+        bool startAnimation, cobraAnimation, waterAnimation, walking, fade, ptIntro = false, wButton = false;
+
+        //List <int> enemyHealth = new List<int>();
+        //List <Rectangle> enemies = new List<Rectangle>();
+        //List<Rectangle> enemiesHealthBar = new List<Rectangle>();
 
         public Game1()
         {
@@ -49,11 +65,15 @@ namespace Looking_Back
         {
             // TODO: Add your initialization logic here
             screen = Screen.Start;
-            enemyHealth.Clear();
+            //enemyHealth.Clear();
             window = new Rectangle(0, 0, 800, 600);
             startBtnRect = new Rectangle(300, 470, 180, 90);
-            whiteManRect = new Rectangle(50, 450, 80, 120);
-            playerSpeed = new Vector2(3 , 11);
+            whiteManRect = new Rectangle(50, 470, 80, 120);
+            wButtonRect = new Rectangle(750, 200, 100, 100);
+            tarpRect = new Rectangle(800,400,250,200);
+            bridgeRect = new Rectangle(1090,230,175,350);
+            crateRect = new Rectangle(1050,490,90,90);
+            playerSpeed = new Vector2(3 , 13);
             _graphics.PreferredBackBufferHeight = window.Height;
             _graphics.PreferredBackBufferWidth = window.Width;
             _graphics.ApplyChanges();
@@ -79,14 +99,18 @@ namespace Looking_Back
             animationOneFour = Content.Load<Texture2D>("Animation One Four");
             walkingRightOne = Content.Load<Texture2D>("White man walking right(1)png");
             walkingRightTwo = Content.Load<Texture2D>("White man walking (2) right");
-            fillerText = Content.Load<Texture2D>("White man walking (2) right");
             walkingRightThree = Content.Load<Texture2D>("White man walking right(3)");
             walkingLeftOne = Content.Load<Texture2D>("White man walking left(1)png");
             walkingLeftTwo = Content.Load<Texture2D>("White man walking (2) left");
             walkingLeftThree = Content.Load<Texture2D>("White man walking left(3)");
             jumpingRight = Content.Load<Texture2D>("White man jumping right");
             jumpingLeft = Content.Load<Texture2D>("White man jumping left");
-            stageOneBG = Content.Load<Texture2D>("Stage one BG one");
+            stageOneBGone = Content.Load<Texture2D>("Stage one BG one");
+            stageOneBGtwo = Content.Load<Texture2D>("Stage one BG two");
+            wButtonText = Content.Load<Texture2D>("w button");
+            tarpText = Content.Load<Texture2D>("tarp");
+            crateText = Content.Load<Texture2D>("crate");
+            bridgeText = Content.Load<Texture2D>("bridge");
             windOneInstance = windOne.CreateInstance();
             windTwoInstance = windTwo.CreateInstance();
             windThreeInstance = windThree.CreateInstance();
@@ -151,6 +175,21 @@ namespace Looking_Back
             {
                 gameTimer++;
                 //Add to top if all chapters and lower to start as you go down!
+                if (whiteManRect.X > 750 || window.X <= -390)
+                {
+                    wButton = true;
+                }
+                    if (gameTimer % 15 == 0)
+                {
+                    if (stageOneBGstate == "one")
+                    {
+                        stageOneBGstate = "two";
+                    }
+               else if (stageOneBGstate == "two")
+                    {
+                        stageOneBGstate = "one";
+                    }
+                }
                 if (ptIntro == false)
                 {
                     if (keyboardState.IsKeyDown(Keys.D))
@@ -169,11 +208,11 @@ namespace Looking_Back
                         }
 
                     }
-                    if (keyboardState.GetPressedKeyCount() == 0 && whiteManRect.Y == groundLevel)
+                    if (keyboardState.GetPressedKeyCount() == 0 && whiteManRect.Bottom == groundLevel)
                     {
                         walkAnimation = 2;
                     }
-                    else if (whiteManRect.Y == groundLevel && (keyboardState.IsKeyDown(Keys.D) || keyboardState.IsKeyDown(Keys.A)))
+                    else if (whiteManRect.Bottom == groundLevel && (keyboardState.IsKeyDown(Keys.D) || keyboardState.IsKeyDown(Keys.A)))
                     {
                         seconds++;
                         if ((seconds % 20) == 0)
@@ -188,8 +227,12 @@ namespace Looking_Back
                         if ((whiteManRect.X - window.X) >= 360 && (whiteManRect.X - (window.X + 3930)) <= -400 && (keyboardState.IsKeyDown(Keys.D) || keyboardState.IsKeyDown(Keys.A)))
                         {
                             window.X = (window.X + (int)playerSpeed.X);
+                        wButtonRect.X = (wButtonRect.X + (int)playerSpeed.X);
+                        tarpRect.X = (tarpRect.X + (int)playerSpeed.X);
+                        crateRect.X = (crateRect.X + (int)playerSpeed.X);
+                        bridgeRect.X = (bridgeRect.X + (int)playerSpeed.X);
 
-                        }
+                    }
                         else if (keyboardState.IsKeyDown(Keys.D) || keyboardState.IsKeyDown(Keys.A))
                         {
                             whiteManRect.X = whiteManRect.X - (int)playerSpeed.X;
@@ -203,13 +246,40 @@ namespace Looking_Back
                     {
                         whiteManRect.X = whiteManRect.X + (int)(playerSpeed.X);
                     }
-
-                    if (keyboardState.IsKeyDown(Keys.W) && whiteManRect.Y == groundLevel)
+                    if (((whiteManRect.Right <= crateRect.Right && playerSpeed.X < 0 && whiteManRect.Right > crateRect.Left) || (whiteManRect.Left >= crateRect.Left && playerSpeed.X > 0 && whiteManRect.Left < crateRect.Right)) && (whiteManRect.Y + 120) > 490)
                     {
-                        whiteManRect.Y = whiteManRect.Y - (int)playerSpeed.Y;
-                        gameTimer = 0;
+                        window.X = (window.X - (int)playerSpeed.X);
+                        wButtonRect.X = (wButtonRect.X - (int)playerSpeed.X);
+                        tarpRect.X = (tarpRect.X - (int)playerSpeed.X);
+                        crateRect.X = (crateRect.X - (int)playerSpeed.X);
+                        bridgeRect.X = (bridgeRect.X - (int)playerSpeed.X);
                     }
-                    if (whiteManRect.Y != groundLevel && whiteManRect.Y < groundLevel)
+                    else if (whiteManRect.Bottom <= crateRect.Top &&/* whiteManRect.Bottom > bridgeRect.Top *//*&& */(whiteManRect.X + 50) >= crateRect.Left && (whiteManRect.X + 30) < crateRect.Right)
+                    {
+                        previousGroundLevel = groundLevel;
+                        groundLevel = crateRect.Top;
+                    }
+                    //else if (whiteManRect.Bottom <= bridgeRect.Top && (whiteManRect.X + 50) >= bridgeRect.Left && (whiteManRect.X + 30) < bridgeRect.Right)
+                    //{
+                    //    previousGroundLevel = groundLevel;
+                    //    groundLevel = bridgeRect.Top;
+                    //}
+                    else
+                    {
+                        previousGroundLevel = groundLevel;
+                        groundLevel = 590;
+                    }
+                    if (previousGroundLevel < groundLevel && whiteManRect.Bottom == previousGroundLevel)
+                    {
+                        playerSpeed.Y = 0;
+                    }
+                        
+                        if (keyboardState.IsKeyDown(Keys.W) && whiteManRect.Bottom == groundLevel)
+                        {
+                             whiteManRect.Y = whiteManRect.Y - (int)playerSpeed.Y;
+                             gameTimer = 0;
+                        }
+                    if (whiteManRect.Bottom != groundLevel && whiteManRect.Bottom < groundLevel)
                     {
                         if ((gameTimer % 2) == 0)
                         {
@@ -217,11 +287,12 @@ namespace Looking_Back
                         }
                         whiteManRect.Y = (int)(whiteManRect.Y - playerSpeed.Y);
                     }
-                    if (whiteManRect.Y > groundLevel)
+                    if (whiteManRect.Bottom > groundLevel)
                     {
-                        whiteManRect.Y = groundLevel;
-                        playerSpeed.Y = 11;
+                        whiteManRect.Y = groundLevel - 120;
+                        playerSpeed.Y = 13;
                     }
+                    
                     
                 }
 
@@ -254,6 +325,7 @@ namespace Looking_Back
                     }
                     if (seconds == 901)
                     {
+                        stageOneBGstate = "one";
                         screen = Screen.Main;
                         window = new Rectangle(0, 0, 4000, 600);
                     }
@@ -288,11 +360,22 @@ namespace Looking_Back
             {
                if (ptIntro == false)
                 {
-                    _spriteBatch.Draw(stageOneBG, window, Color.White);
-
-                    /*_spriteBatch.Draw(fillerText, whiteManRect, Color.White);*///alanna
-
-                    if (whiteManRect.Y == groundLevel)
+                    if (stageOneBGstate == "one")
+                    {
+                        _spriteBatch.Draw(stageOneBGone, window, Color.White);
+                    }
+                    else if (stageOneBGstate == "two")
+                    {
+                        _spriteBatch.Draw(stageOneBGtwo, window, Color.White);
+                    }
+                    if (wButton == true)
+                    {
+                        _spriteBatch.Draw(wButtonText, wButtonRect, Color.White);
+                    }
+                    _spriteBatch.Draw(tarpText, tarpRect, Color.White);
+                    _spriteBatch.Draw(crateText, crateRect, Color.White);
+                    _spriteBatch.Draw(bridgeText, bridgeRect, Color.White);
+                    if (whiteManRect.Bottom == groundLevel)
                     {
                         if (playerSpeed.X < 0)
                         {
