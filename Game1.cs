@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
+using System.Collections.Generic;
+//using System.Drawing;
 //using System.Collections.Generic;
 //using System.Drawing;
 //Was saying it was ambiguous because this and microsoft xna had same shit?
@@ -28,13 +30,15 @@ namespace Looking_Back
 
         KeyboardState keyboardState;
 
-        Rectangle window, startBtnRect, whiteManRect, playerHealthBarRect, wButtonRect, tarpRect, bridgeRect, crateRect;
+        Rectangle window, startBtnRect, whiteManRect, playerHealthBarRect, wButtonRect, tarpRect, bridgeRect,
+        crateRect, goblinRect, dart;
 
         Vector2 playerSpeed, snakeSpeed;
 
         Texture2D introScreenText, startBtnText, animationOneOne, animationOneTwo, animationOneThree, 
-        animationOneFour, walkingLeftOne, walkingLeftTwo, walkingLeftThree, walkingRightOne, walkingRightTwo, walkingRightThree, stageOneBGone, stageOneBGtwo, 
-        jumpingRight, jumpingLeft, wButtonText, tarpText, bridgeText, crateText;
+        animationOneFour, walkingLeftOne, walkingLeftTwo, walkingLeftThree, walkingRightOne, walkingRightTwo,
+        walkingRightThree, stageOneBGone, stageOneBGtwo, jumpingRight, jumpingLeft, wButtonText, tarpText,
+        bridgeText, crateText, goblinText, dartText;
        
         SoundEffect windOne, windTwo, windThree, windFour, birds;
 
@@ -46,13 +50,15 @@ namespace Looking_Back
 
         float snakeattackSpeed, gravitationalAcceleration = 0;
 
-        int walkAnimation = 0, windNum = 1, introFade = 0, seconds = 0, gameTimer = 0, walkingAnimationStep = 2, groundLevel = 590, previousGroundLevel = 590;
+        int walkAnimation = 0, windNum = 1, introFade = 0, seconds = 0, gameTimer = 0, walkingAnimationStep = 2,
+        groundLevel = 590, previousGroundLevel = 590;
 
         bool startAnimation, cobraAnimation, waterAnimation, walking, fade, ptIntro = false, wButton = false;
 
         //List <int> enemyHealth = new List<int>();
         //List <Rectangle> enemies = new List<Rectangle>();
         //List<Rectangle> enemiesHealthBar = new List<Rectangle>();
+        List<Rectangle> darts = new List<Rectangle>();
 
         public Game1()
         {
@@ -111,6 +117,8 @@ namespace Looking_Back
             tarpText = Content.Load<Texture2D>("tarp");
             crateText = Content.Load<Texture2D>("crate");
             bridgeText = Content.Load<Texture2D>("bridge");
+            goblinText = Content.Load<Texture2D>("Goblin door");
+            dartText = Content.Load<Texture2D>("dart");
             windOneInstance = windOne.CreateInstance();
             windTwoInstance = windTwo.CreateInstance();
             windThreeInstance = windThree.CreateInstance();
@@ -254,16 +262,21 @@ namespace Looking_Back
                         crateRect.X = (crateRect.X - (int)playerSpeed.X);
                         bridgeRect.X = (bridgeRect.X - (int)playerSpeed.X);
                     }
-                    else if (whiteManRect.Bottom <= crateRect.Top &&/* whiteManRect.Bottom > bridgeRect.Top *//*&& */(whiteManRect.X + 50) >= crateRect.Left && (whiteManRect.X + 30) < crateRect.Right)
+                    else if (whiteManRect.Bottom <= crateRect.Top && whiteManRect.Bottom > (bridgeRect.Top + 65) && (whiteManRect.X + 50) >= crateRect.Left && (whiteManRect.X + 30) < crateRect.Right)
                     {
                         previousGroundLevel = groundLevel;
                         groundLevel = crateRect.Top;
                     }
-                    //else if (whiteManRect.Bottom <= bridgeRect.Top && (whiteManRect.X + 50) >= bridgeRect.Left && (whiteManRect.X + 30) < bridgeRect.Right)
-                    //{
-                    //    previousGroundLevel = groundLevel;
-                    //    groundLevel = bridgeRect.Top;
-                    //}
+                    else if (whiteManRect.Bottom <= tarpRect.Top && (whiteManRect.X + 50) >= tarpRect.Left && (whiteManRect.X + 30) < tarpRect.Right)
+                    {
+                        previousGroundLevel = groundLevel;
+                        groundLevel = tarpRect.Top;
+                    }
+                    else if (whiteManRect.Bottom <= (bridgeRect.Top + 65) && (whiteManRect.X + 50) >= bridgeRect.Left && (whiteManRect.X + 30) < bridgeRect.Right)
+                    {
+                        previousGroundLevel = groundLevel;
+                        groundLevel = tarpRect.Top;
+                    }
                     else
                     {
                         previousGroundLevel = groundLevel;
