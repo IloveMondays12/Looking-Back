@@ -262,7 +262,11 @@ namespace Looking_Back
                         crateRect.X = (crateRect.X - (int)playerSpeed.X);
                         bridgeRect.X = (bridgeRect.X - (int)playerSpeed.X);
                     }
-                    else if (whiteManRect.Bottom <= crateRect.Top && whiteManRect.Bottom > (bridgeRect.Top + 65) && (whiteManRect.X + 50) >= crateRect.Left && (whiteManRect.X + 30) < crateRect.Right)
+                    if (whiteManRect.Top <= (bridgeRect.Top + 75 ) && whiteManRect.Bottom >= (bridgeRect.Top + 75) && playerSpeed.Y>0 && whiteManRect.Right >= bridgeRect.Left && whiteManRect.Right <= (bridgeRect.Left + 100))
+                    {
+                        playerSpeed.Y = 0;
+                    }
+                    else if (whiteManRect.Bottom <= crateRect.Top && whiteManRect.Bottom > (bridgeRect.Top + 75) && (whiteManRect.X + 50) >= crateRect.Left && (whiteManRect.X + 30) < crateRect.Right)
                     {
                         previousGroundLevel = groundLevel;
                         groundLevel = crateRect.Top;
@@ -272,10 +276,10 @@ namespace Looking_Back
                         previousGroundLevel = groundLevel;
                         groundLevel = tarpRect.Top;
                     }
-                    else if (whiteManRect.Bottom <= (bridgeRect.Top + 65) && (whiteManRect.X + 50) >= bridgeRect.Left && (whiteManRect.X + 30) < bridgeRect.Right)
+                    else if (whiteManRect.Bottom <= (bridgeRect.Top + 75) && (whiteManRect.X + 50) >= bridgeRect.Left && (whiteManRect.X + 30) < (bridgeRect.Left + 100))
                     {
                         previousGroundLevel = groundLevel;
-                        groundLevel = tarpRect.Top;
+                        groundLevel = (bridgeRect.Top + 75);
                     }
                     else
                     {
@@ -385,9 +389,8 @@ namespace Looking_Back
                     {
                         _spriteBatch.Draw(wButtonText, wButtonRect, Color.White);
                     }
+
                     _spriteBatch.Draw(tarpText, tarpRect, Color.White);
-                    _spriteBatch.Draw(crateText, crateRect, Color.White);
-                    _spriteBatch.Draw(bridgeText, bridgeRect, Color.White);
                     if (whiteManRect.Bottom == groundLevel)
                     {
                         if (playerSpeed.X < 0)
@@ -442,6 +445,8 @@ namespace Looking_Back
                             _spriteBatch.Draw(jumpingLeft, whiteManRect, Color.White);
                         }
                     }
+                    _spriteBatch.Draw(crateText, crateRect, Color.White);
+                    _spriteBatch.Draw(bridgeText, bridgeRect, Color.White);
                 }
             }
 
