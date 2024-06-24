@@ -262,7 +262,23 @@ namespace Looking_Back
                         crateRect.X = (crateRect.X - (int)playerSpeed.X);
                         bridgeRect.X = (bridgeRect.X - (int)playerSpeed.X);
                     }
-                    if (whiteManRect.Top <= (bridgeRect.Top + 75 ) && whiteManRect.Bottom >= (bridgeRect.Top + 75) && playerSpeed.Y>0 && whiteManRect.Right >= bridgeRect.Left && whiteManRect.Right <= (bridgeRect.Left + 100))
+                    if (whiteManRect.Right <= (bridgeRect.Left + 100) && playerSpeed.X < 0 && whiteManRect.Right > (bridgeRect.Left + 95) && whiteManRect.Bottom > (bridgeRect.Top + 75))
+                    {
+                        window.X = (window.X - (int)playerSpeed.X);
+                        wButtonRect.X = (wButtonRect.X - (int)playerSpeed.X);
+                        tarpRect.X = (tarpRect.X - (int)playerSpeed.X);
+                        crateRect.X = (crateRect.X - (int)playerSpeed.X);
+                        bridgeRect.X = (bridgeRect.X - (int)playerSpeed.X);
+                    }
+                    if (whiteManRect.Left >= (bridgeRect.Left + 95) && playerSpeed.X > 0 && whiteManRect.Left <= (bridgeRect.Left + 97) && whiteManRect.Bottom > (bridgeRect.Top + 75))
+                    {
+                        window.X = (window.X - (int)playerSpeed.X);
+                        wButtonRect.X = (wButtonRect.X - (int)playerSpeed.X);
+                        tarpRect.X = (tarpRect.X - (int)playerSpeed.X);
+                        crateRect.X = (crateRect.X - (int)playerSpeed.X);
+                        bridgeRect.X = (bridgeRect.X - (int)playerSpeed.X);
+                    }
+                    if (whiteManRect.Top <= (bridgeRect.Top + 75 ) && whiteManRect.Bottom >= (bridgeRect.Top + 75) && playerSpeed.Y>0 && whiteManRect.Right >= bridgeRect.Left && whiteManRect.Right <= (bridgeRect.Left + 115))
                     {
                         playerSpeed.Y = 0;
                     }
@@ -276,10 +292,15 @@ namespace Looking_Back
                         previousGroundLevel = groundLevel;
                         groundLevel = tarpRect.Top;
                     }
-                    else if (whiteManRect.Bottom <= (bridgeRect.Top + 75) && (whiteManRect.X + 50) >= bridgeRect.Left && (whiteManRect.X + 30) < (bridgeRect.Left + 100))
+                    else if (whiteManRect.Bottom <= (bridgeRect.Top + 75) && (whiteManRect.X + 50) >= bridgeRect.Left && (whiteManRect.X) < (bridgeRect.Left + 95))
                     {
                         previousGroundLevel = groundLevel;
                         groundLevel = (bridgeRect.Top + 75);
+                    }
+                    else if ((whiteManRect.X) >= (bridgeRect.Left + 95) && (whiteManRect.X + 50) <= bridgeRect.Right)
+                    {
+                        previousGroundLevel = groundLevel;
+                        groundLevel = 486;
                     }
                     else
                     {
@@ -389,7 +410,6 @@ namespace Looking_Back
                     {
                         _spriteBatch.Draw(wButtonText, wButtonRect, Color.White);
                     }
-
                     _spriteBatch.Draw(tarpText, tarpRect, Color.White);
                     if (whiteManRect.Bottom == groundLevel)
                     {
