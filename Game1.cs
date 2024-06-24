@@ -5,7 +5,8 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+//using System.Drawing;
+//using System.Drawing;
 //using System.Drawing;
 //Was saying it was ambiguous because this and microsoft xna had same shit?
 
@@ -30,7 +31,7 @@ namespace Looking_Back
         KeyboardState keyboardState;
 
         Rectangle window, startBtnRect, whiteManRect, playerHealthBarRect, wButtonRect, tarpRect, bridgeRect,
-        crateRect, goblinRect, dart;
+        crateRect, goblinRect, dart, tempRect;
 
         Vector2 playerSpeed, snakeSpeed;
 
@@ -194,28 +195,38 @@ namespace Looking_Back
 
             if (screen == Screen.Main)
             {
+                introFade++;
+                MediaPlayer.Volume = ((100f - (introFade/2)) / 100);
+                if (MediaPlayer.Volume == 0)
+                {
+                    MediaPlayer.Pause();
+                    MediaPlayer.Volume = 1;
+                }
+                
                 gameTimer++;
                 //Add to top if all chapters and lower to start as you go down!
                 if (whiteManRect.X > 750 || window.X <= -390)
                 {
                     wButton = true;
                 }
-                    if (gameTimer % 15 == 0)
+                if (gameTimer % 15 == 0)
                 {
                     if (stageOneBGstate == "one")
                     {
                         stageOneBGstate = "two";
                     }
-               else if (stageOneBGstate == "two")
+                    else if (stageOneBGstate == "two")
                     {
                         stageOneBGstate = "one";
                     }
                 }
                 if (ptIntro == false)
                 {
-                    if (darts.Count != 0)
+                    for (int y = 0; y < darts.Count; y++) 
                     {
-                        dartsX = dartsX + 4;
+                        tempRect = darts[y];
+                        tempRect.X = tempRect.X + 4;
+                        darts[y] = tempRect;
                     }
                     if (keyboardState.IsKeyDown(Keys.D))
                     {
@@ -258,9 +269,17 @@ namespace Looking_Back
                             crateRect.X = (crateRect.X + (int)playerSpeed.X);
                             bridgeRect.X = (bridgeRect.X + (int)playerSpeed.X);
                             goblinRect.X = (goblinRect.X + (int)playerSpeed.X);
-                        
+                            for (int y = 0; y < darts.Count; y++)
+                            {
+                            tempRect = darts[y];
+                            tempRect.X = tempRect.X + (int)playerSpeed.X;
+                            darts[y] = tempRect;
+                            }
+                            dartsX = (dartsX + (int)playerSpeed.X);
+
 
                         }
+                        
                         else if (keyboardState.IsKeyDown(Keys.D) || keyboardState.IsKeyDown(Keys.A))
                         {
                             whiteManRect.X = whiteManRect.X - (int)playerSpeed.X;
@@ -274,6 +293,22 @@ namespace Looking_Back
                     {
                         whiteManRect.X = whiteManRect.X + (int)(playerSpeed.X);
                     }
+                    if (goblinActive == true && whiteManRect.X <= goblinRect.Right && playerSpeed.X > 0)
+                    {
+                        window.X = (window.X - (int)playerSpeed.X);
+                        wButtonRect.X = (wButtonRect.X - (int)playerSpeed.X);
+                        tarpRect.X = (tarpRect.X - (int)playerSpeed.X);
+                        crateRect.X = (crateRect.X - (int)playerSpeed.X);
+                        bridgeRect.X = (bridgeRect.X - (int)playerSpeed.X);
+                        goblinRect.X = (goblinRect.X - (int)playerSpeed.X);
+                        for (int y = 0; y < darts.Count; y++)
+                        {
+                            tempRect = darts[y];
+                            tempRect.X = tempRect.X - (int)playerSpeed.X;
+                            darts[y] = tempRect;
+                        }
+                        dartsX = (dartsX - (int)playerSpeed.X);
+                    }
                     if (((whiteManRect.Right <= crateRect.Right && playerSpeed.X < 0 && whiteManRect.Right > crateRect.Left) || (whiteManRect.Left >= crateRect.Left && playerSpeed.X > 0 && whiteManRect.Left < crateRect.Right)) && (whiteManRect.Y + 120) > 490)
                     {
                         window.X = (window.X - (int)playerSpeed.X);
@@ -282,6 +317,7 @@ namespace Looking_Back
                         crateRect.X = (crateRect.X - (int)playerSpeed.X);
                         bridgeRect.X = (bridgeRect.X - (int)playerSpeed.X);
                         goblinRect.X = (goblinRect.X - (int)playerSpeed.X);
+                        
                     }
                     if (whiteManRect.Right <= (bridgeRect.Left + 100) && playerSpeed.X < 0 && whiteManRect.Right > (bridgeRect.Left + 95) && whiteManRect.Bottom > (bridgeRect.Top + 75))
                     {
@@ -364,7 +400,7 @@ namespace Looking_Back
                     }
                     if ((whiteManRect.X - goblinRect.X) >= 80 && goblinActive == false)
                     {
-                        doorOpenInstance.Play();
+                        doorOpen.Play();
                         goblinActive = true;
 
                     }
@@ -372,13 +408,11 @@ namespace Looking_Back
                     {
                         goblinStartTime = gameTimer;
                     }
-                    if (goblinActive == true && darts != 0)
+                    if (dartStartTimes.Contains(gameTimer-goblinStartTime) && goblinActive == true)
                     {
-
-                        for (int e = 0; e < darts; e++;)
-                        {
-                            _spriteBatch.Draw(dartText, darts[e], Color.White);
-                        }
+                        Rectangle dart = new Rectangle(dartsX, 550, 20, 10);
+                        darts.Add(dart);
+                        goblinShoot.Play();
                     }
                     
                     
