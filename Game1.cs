@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 //using System.Drawing;
 //Was saying it was ambiguous because this and microsoft xna had same shit?
 
@@ -371,12 +372,12 @@ namespace Looking_Back
                     {
                         goblinStartTime = gameTimer;
                     }
-                    if (goblinActive == true && doorOpenInstance.State == SoundState.Stopped)
+                    if (goblinActive == true && darts != 0)
                     {
-                        
-                        if (dartStartTimes.Contains(gameTimer - goblinStartTime))
+
+                        for (int e = 0; e < darts; e++;)
                         {
-                            darts.Add(new Rectangle((dartsX - ((dartStartTimes[0] - dartStartTimes[darts.Count])*4)), 560, 15, 10));
+                            _spriteBatch.Draw(dartText, darts[e], Color.White);
                         }
                     }
                     
