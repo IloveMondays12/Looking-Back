@@ -8,6 +8,7 @@ using System.Collections.Generic;
 //using System.Drawing;
 //using System.Drawing;
 //using System.Drawing;
+//using System.Drawing;
 //Was saying it was ambiguous because this and microsoft xna had same shit?
 
 namespace Looking_Back
@@ -31,27 +32,27 @@ namespace Looking_Back
         KeyboardState keyboardState;
 
         Rectangle window, startBtnRect, whiteManRect, playerHealthBarRect, wButtonRect, tarpRect, bridgeRect,
-        crateRect, goblinRect, dart, tempRect;
+        crateRect, goblinRect, dart, tempRect, heartRect;
 
         Vector2 playerSpeed, snakeSpeed;
 
         Texture2D introScreenText, startBtnText, animationOneOne, animationOneTwo, animationOneThree, 
         animationOneFour, walkingLeftOne, walkingLeftTwo, walkingLeftThree, walkingRightOne, walkingRightTwo,
         walkingRightThree, stageOneBGone, stageOneBGtwo, jumpingRight, jumpingLeft, wButtonText, tarpText,
-        bridgeText, crateText, goblinText, dartText;
+        bridgeText, crateText, goblinText, dartText, heartText;
        
-        SoundEffect windOne, windTwo, windThree, windFour, birds, doorOpen, sickInk, goblinShoot;
+        SoundEffect windOne, windTwo, windThree, windFour, birds, doorOpen, sickInk, goblinShoot, pain, footStep;
 
         Song introSong;
 
-        SoundEffectInstance windOneInstance, windTwoInstance, windThreeInstance, windFourInstance, doorOpenInstance, sickInkInstance, goblinShootInstance;
+        SoundEffectInstance windOneInstance, windTwoInstance, windThreeInstance, windFourInstance, doorOpenInstance, sickInkInstance, goblinShootInstance, footStepInstance;
 
         String stageOneBGstate;
 
         float snakeattackSpeed, gravitationalAcceleration = 0;
 
         int walkAnimation = 0, windNum = 1, introFade = 0, seconds = 0, gameTimer = 0, walkingAnimationStep = 2,
-        groundLevel = 590, previousGroundLevel = 590, goblinStartTime = 0, dartsX;
+        groundLevel = 590, previousGroundLevel = 590, goblinStartTime = 0, dartsX, health = 3, dartsCount = 0;
 
         bool startAnimation, cobraAnimation, waterAnimation, walking, fade, ptIntro = false, wButton = false,
             goblinActive = false;
@@ -81,12 +82,16 @@ namespace Looking_Back
             tarpRect = new Rectangle(800,400,250,200);
             bridgeRect = new Rectangle(1090,230,175,350);
             crateRect = new Rectangle(1050,490,90,90);
+            heartRect = new Rectangle(50, 50,25,25);
             goblinRect = new Rectangle((bridgeRect.Right - 20), 530, 60, 60);
             dartsX = goblinRect.Right;
             playerSpeed = new Vector2(3 , 13);
-            dartStartTimes.Add(generator.Next(30, 300));
-            dartStartTimes.Add(generator.Next(30, 300));
-            dartStartTimes.Add(generator.Next(30, 300));
+            dartStartTimes.Add(generator.Next(30, 360));
+            dartStartTimes.Add(generator.Next(30, 360));
+            dartStartTimes.Add(generator.Next(30, 360));
+            dartStartTimes.Add(generator.Next(30, 360));
+            dartStartTimes.Add(generator.Next(30, 360));
+            dartStartTimes.Add(generator.Next(30, 360));
             dartStartTimes.Sort();
             _graphics.PreferredBackBufferHeight = window.Height;
             _graphics.PreferredBackBufferWidth = window.Width;
@@ -106,7 +111,9 @@ namespace Looking_Back
             birds = Content.Load<SoundEffect>("Birds");
             doorOpen = Content.Load<SoundEffect>("Door open");
             sickInk = Content.Load<SoundEffect>("nice ink (lewis)");
+            pain = Content.Load<SoundEffect>("Pain");
             goblinShoot = Content.Load<SoundEffect>("Dart goblin 2");
+            footStep = Content.Load<SoundEffect>("foot step");
             introSong = Content.Load<Song>("Bill Withers - Ain't No Sunshine");
             introScreenText = Content.Load<Texture2D>("Intro screen");
             startBtnText = Content.Load<Texture2D>("Start button");
@@ -130,6 +137,7 @@ namespace Looking_Back
             bridgeText = Content.Load<Texture2D>("bridge");
             goblinText = Content.Load<Texture2D>("Goblin door");
             dartText = Content.Load<Texture2D>("dart");
+            heartText = Content.Load<Texture2D>("pixel heart");
             windOneInstance = windOne.CreateInstance();
             windTwoInstance = windTwo.CreateInstance();
             windThreeInstance = windThree.CreateInstance();
@@ -137,6 +145,7 @@ namespace Looking_Back
             goblinShootInstance = goblinShoot.CreateInstance();
             doorOpenInstance = doorOpen.CreateInstance();
             sickInkInstance = sickInk.CreateInstance();
+            footStepInstance = footStep.CreateInstance();
             // TODO: use this.Content to load your game content here
         }
 
@@ -222,10 +231,21 @@ namespace Looking_Back
                 }
                 if (ptIntro == false)
                 {
+                    if (health == 0)
+                    {
+                        seconds = 0;
+                        screen = Screen.Death;
+                    }
+                    if (whiteManRect.Right >= (window.Right - 10))
+                    {
+                        seconds = 0;
+                        ptIntro = true;
+                        screen = Screen.Animation;
+                    }
                     for (int y = 0; y < darts.Count; y++) 
                     {
                         tempRect = darts[y];
-                        tempRect.X = tempRect.X + 4;
+                        tempRect.X = tempRect.X + 9;
                         darts[y] = tempRect;
                     }
                     if (keyboardState.IsKeyDown(Keys.D))
@@ -246,10 +266,18 @@ namespace Looking_Back
                     }
                     if (keyboardState.GetPressedKeyCount() == 0 && whiteManRect.Bottom == groundLevel)
                     {
+                        if (footStepInstance.State == SoundState.Playing)
+                        {
+                            footStepInstance.Stop();
+                        }
                         walkAnimation = 2;
                     }
                     else if (whiteManRect.Bottom == groundLevel && (keyboardState.IsKeyDown(Keys.D) || keyboardState.IsKeyDown(Keys.A)))
                     {
+                        if (footStepInstance.State == SoundState.Stopped)
+                        {
+                            footStepInstance.Play();
+                        }
                         seconds++;
                         if ((seconds % 20) == 0)
                         {
@@ -317,7 +345,14 @@ namespace Looking_Back
                         crateRect.X = (crateRect.X - (int)playerSpeed.X);
                         bridgeRect.X = (bridgeRect.X - (int)playerSpeed.X);
                         goblinRect.X = (goblinRect.X - (int)playerSpeed.X);
-                        
+                        for (int y = 0; y < darts.Count; y++)
+                        {
+                            tempRect = darts[y];
+                            tempRect.X = tempRect.X - (int)playerSpeed.X;
+                            darts[y] = tempRect;
+                        }
+                        dartsX = (dartsX - (int)playerSpeed.X);
+
                     }
                     if (whiteManRect.Right <= (bridgeRect.Left + 100) && playerSpeed.X < 0 && whiteManRect.Right > (bridgeRect.Left + 95) && whiteManRect.Bottom > (bridgeRect.Top + 75))
                     {
@@ -327,6 +362,13 @@ namespace Looking_Back
                         crateRect.X = (crateRect.X - (int)playerSpeed.X);
                         bridgeRect.X = (bridgeRect.X - (int)playerSpeed.X);
                         goblinRect.X = (goblinRect.X - (int)playerSpeed.X);
+                        for (int y = 0; y < darts.Count; y++)
+                        {
+                            tempRect = darts[y];
+                            tempRect.X = tempRect.X - (int)playerSpeed.X;
+                            darts[y] = tempRect;
+                        }
+                        dartsX = (dartsX - (int)playerSpeed.X);
                     }
                     if (whiteManRect.Left >= (bridgeRect.Left + 95) && playerSpeed.X > 0 && whiteManRect.Left <= (bridgeRect.Left + 97) && whiteManRect.Bottom > (bridgeRect.Top + 75))
                     {
@@ -336,6 +378,13 @@ namespace Looking_Back
                         crateRect.X = (crateRect.X - (int)playerSpeed.X);
                         bridgeRect.X = (bridgeRect.X - (int)playerSpeed.X);
                         goblinRect.X = (goblinRect.X - (int)playerSpeed.X);
+                        for (int y = 0; y < darts.Count; y++)
+                        {
+                            tempRect = darts[y];
+                            tempRect.X = tempRect.X - (int)playerSpeed.X;
+                            darts[y] = tempRect;
+                        }
+                        dartsX = (dartsX - (int)playerSpeed.X);
                     }
                     if ((whiteManRect.Left + 50) >= bridgeRect.Right && whiteManRect.Bottom > 486 && (whiteManRect.X + 50) <= (bridgeRect.Right + 3))
                     {
@@ -345,6 +394,13 @@ namespace Looking_Back
                         crateRect.X = (crateRect.X - (int)playerSpeed.X);
                         bridgeRect.X = (bridgeRect.X - (int)playerSpeed.X);
                         goblinRect.X = (goblinRect.X - (int)playerSpeed.X);
+                        for (int y = 0; y < darts.Count; y++)
+                        {
+                            tempRect = darts[y];
+                            tempRect.X = tempRect.X - (int)playerSpeed.X;
+                            darts[y] = tempRect;
+                        }
+                        dartsX = (dartsX - (int)playerSpeed.X);
                     }
                     if (whiteManRect.Top <= (bridgeRect.Top + 75 ) && whiteManRect.Bottom >= (bridgeRect.Top + 75) && playerSpeed.Y>0 && whiteManRect.Right >= bridgeRect.Left && whiteManRect.Right <= (bridgeRect.Left + 115))
                     {
@@ -398,7 +454,7 @@ namespace Looking_Back
                         whiteManRect.Y = groundLevel - 120;
                         playerSpeed.Y = 13;
                     }
-                    if ((whiteManRect.X - goblinRect.X) >= 80 && goblinActive == false)
+                    if ((whiteManRect.X - goblinRect.X) >= 80 && goblinActive == false && dartsCount <5)
                     {
                         doorOpen.Play();
                         goblinActive = true;
@@ -410,12 +466,37 @@ namespace Looking_Back
                     }
                     if (dartStartTimes.Contains(gameTimer-goblinStartTime) && goblinActive == true)
                     {
+                        dartsCount++;
                         Rectangle dart = new Rectangle(dartsX, 550, 20, 10);
                         darts.Add(dart);
                         goblinShoot.Play();
                     }
+                    if (dartsCount == 5 && goblinActive == true)
+                    {
+                        goblinActive = false;
+                        doorOpen.Play();
+                    }
                     
-                    
+                    for (int w = 0; w < darts.Count; w++)
+                    {
+                        if (darts[w].Right <= whiteManRect.Right && darts[w].Right >= whiteManRect.Left && darts[w].Y <= whiteManRect.Bottom && darts[w].Y >= whiteManRect.Top)
+                        {
+                            pain.Play();
+                            darts.RemoveAt(w);
+                            health--;
+
+                        }
+                        
+                    }
+                    for (int w = 0; w < darts.Count; w++)
+                    {
+                        
+                        if (darts[w].X >= window.Right)
+                        {
+                            darts.RemoveAt(w);
+                        }
+                    }
+
                 }
 
                
@@ -452,6 +533,8 @@ namespace Looking_Back
                         window = new Rectangle(0, 0, 4000, 600);
                     }
                 }
+
+
             }
 
 
@@ -493,6 +576,11 @@ namespace Looking_Back
                     if (wButton == true)
                     {
                         _spriteBatch.Draw(wButtonText, wButtonRect, Color.White);
+                    }
+                    for (int t = 0; t < health; t ++)
+                    {
+
+                        _spriteBatch.Draw(heartText, new Rectangle(heartRect.X + (t * 30), 50, 25, 25), Color.White);
                     }
                     _spriteBatch.Draw(tarpText, tarpRect, Color.White);
                     if (whiteManRect.Bottom == groundLevel)
@@ -568,22 +656,25 @@ namespace Looking_Back
 
             if (screen == Screen.Animation)
             {
-                if (seconds < 180)
+                if (ptIntro == false)
                 {
-                    _spriteBatch.Draw(animationOneOne, window, Color.White);
-                }
-                else if (seconds < 420)
-                {
-                    _spriteBatch.Draw(animationOneTwo, window, Color.White);
-                }
-                else if (seconds < 660)
-                {
-                    _spriteBatch.Draw(animationOneThree, window, Color.White);
-                }
-                else if (seconds <= 900)
-                {
-                    _spriteBatch.Draw(animationOneFour, window, Color.White * ((100f - (introFade * 2f)) / 100f));
-
+                 
+                    if (seconds < 180)
+                    {
+                        _spriteBatch.Draw(animationOneOne, window, Color.White);
+                    }
+                    else if (seconds < 420)
+                    {
+                        _spriteBatch.Draw(animationOneTwo, window, Color.White);
+                    }
+                    else if (seconds < 660)
+                    {
+                        _spriteBatch.Draw(animationOneThree, window, Color.White);
+                    }
+                    else if (seconds <= 900)
+                    {
+                        _spriteBatch.Draw(animationOneFour, window, Color.White * ((100f - (introFade * 2f)) / 100f));
+                    }
                 }
             }
             if (screen == Screen.Death)

@@ -121,6 +121,12 @@
 /processorParam:Quality=Best
 /build:Door open.wav
 
+#begin foot step.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:foot step.wav
+
 #begin Goblin door.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -150,6 +156,24 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:nice ink (lewis).wav
+
+#begin Pain.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Pain.wav
+
+#begin pixel heart.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:pixel heart.png
 
 #begin Stage one BG one.jpg
 /importer:TextureImporter
@@ -330,4 +354,16 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Wind (4).wav
+
+#begin You died.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:You died.jpg
 
