@@ -19,6 +19,18 @@
 /processorParam:Quality=Best
 /build:../../../../../Downloads/cartoon talk.wav;cartoon talk.wav
 
+#begin ../../../../../Downloads/You died.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../../../../Downloads/You died.jpg;You died.jpg
+
 #begin Aiden.jpg
 /importer:TextureImporter
 /processor:TextureProcessor

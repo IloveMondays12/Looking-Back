@@ -10,6 +10,7 @@ using System.Collections.Generic;
 //using System.Drawing;
 //using System.Drawing;
 //using System.Drawing;
+//using System.Drawing;
 //Was saying it was ambiguous because this and microsoft xna had same shit?
 
 namespace Looking_Back
@@ -41,7 +42,7 @@ namespace Looking_Back
         animationOneFour, walkingLeftOne, walkingLeftTwo, walkingLeftThree, walkingRightOne, walkingRightTwo,
         walkingRightThree, stageOneBGone, stageOneBGtwo, jumpingRight, jumpingLeft, wButtonText, tarpText,
         bridgeText, crateText, goblinText, dartText, heartText, aidenText, lewisText, speechbubbleText, tatooText,
-        nickText, dragonTat;
+        nickText, dragonTat, deadText;
        
         SoundEffect windOne, windTwo, windThree, windFour, birds, doorOpen, sickInk, goblinShoot, pain, footStep, mumbleTalk, nickTalk;
 
@@ -147,6 +148,7 @@ namespace Looking_Back
             nickText = Content.Load<Texture2D>("Nick nerd");
             dragonTat = Content.Load<Texture2D>("Dragon tat");
             speechbubbleText = Content.Load<Texture2D>("pixel-speech-bubble (new)");
+            deadText = Content.Load<Texture2D>("You died");
             windOneInstance = windOne.CreateInstance();
             windTwoInstance = windTwo.CreateInstance();
             windThreeInstance = windThree.CreateInstance();
@@ -245,6 +247,7 @@ namespace Looking_Back
                     if (health == 0)
                     {
                         seconds = 0;
+                        window = new Rectangle(0, 0, 800, 600);
                         screen = Screen.Death;
                     }
                     if (whiteManRect.Right >= (window.Right - 10))
@@ -578,7 +581,11 @@ namespace Looking_Back
 
             if (screen == Screen.Death)
             {
-
+                seconds++;
+                if (seconds == 150)
+                {
+                    Exit();
+                }
             }
             // TODO: Add your update logic here
 
@@ -741,7 +748,7 @@ namespace Looking_Back
             }
             if (screen == Screen.Death)
             {
-
+                _spriteBatch.Draw(deadText, window, Color.White * ((float)seconds/100));
             }
             _spriteBatch.End();
             base.Draw(gameTime);
