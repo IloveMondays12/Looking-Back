@@ -9,6 +9,7 @@ using System.Collections.Generic;
 //using System.Drawing;
 //using System.Drawing;
 //using System.Drawing;
+//using System.Drawing;
 //Was saying it was ambiguous because this and microsoft xna had same shit?
 
 namespace Looking_Back
@@ -39,13 +40,14 @@ namespace Looking_Back
         Texture2D introScreenText, startBtnText, animationOneOne, animationOneTwo, animationOneThree, 
         animationOneFour, walkingLeftOne, walkingLeftTwo, walkingLeftThree, walkingRightOne, walkingRightTwo,
         walkingRightThree, stageOneBGone, stageOneBGtwo, jumpingRight, jumpingLeft, wButtonText, tarpText,
-        bridgeText, crateText, goblinText, dartText, heartText;
+        bridgeText, crateText, goblinText, dartText, heartText, aidenText, lewisText, speechbubbleText, tatooText,
+        nickText, dragonTat;
        
-        SoundEffect windOne, windTwo, windThree, windFour, birds, doorOpen, sickInk, goblinShoot, pain, footStep;
+        SoundEffect windOne, windTwo, windThree, windFour, birds, doorOpen, sickInk, goblinShoot, pain, footStep, mumbleTalk, nickTalk;
 
         Song introSong;
 
-        SoundEffectInstance windOneInstance, windTwoInstance, windThreeInstance, windFourInstance, doorOpenInstance, sickInkInstance, goblinShootInstance, footStepInstance;
+        SoundEffectInstance windOneInstance, windTwoInstance, windThreeInstance, windFourInstance, doorOpenInstance, sickInkInstance, goblinShootInstance, footStepInstance, mumbleTalkInstance, nickTalkInstance;
 
         String stageOneBGstate;
 
@@ -112,8 +114,10 @@ namespace Looking_Back
             doorOpen = Content.Load<SoundEffect>("Door open");
             sickInk = Content.Load<SoundEffect>("nice ink (lewis)");
             pain = Content.Load<SoundEffect>("Pain");
+            mumbleTalk = Content.Load<SoundEffect>("cartoon talk");
             goblinShoot = Content.Load<SoundEffect>("Dart goblin 2");
             footStep = Content.Load<SoundEffect>("foot step");
+            nickTalk  = Content.Load<SoundEffect>("cats pajams");
             introSong = Content.Load<Song>("Bill Withers - Ain't No Sunshine");
             introScreenText = Content.Load<Texture2D>("Intro screen");
             startBtnText = Content.Load<Texture2D>("Start button");
@@ -138,6 +142,11 @@ namespace Looking_Back
             goblinText = Content.Load<Texture2D>("Goblin door");
             dartText = Content.Load<Texture2D>("dart");
             heartText = Content.Load<Texture2D>("pixel heart");
+            aidenText = Content.Load<Texture2D>("Aiden");
+            lewisText = Content.Load<Texture2D>("Lewis Cruisin");
+            nickText = Content.Load<Texture2D>("Nick nerd");
+            dragonTat = Content.Load<Texture2D>("Dragon tat");
+            speechbubbleText = Content.Load<Texture2D>("pixel-speech-bubble (new)");
             windOneInstance = windOne.CreateInstance();
             windTwoInstance = windTwo.CreateInstance();
             windThreeInstance = windThree.CreateInstance();
@@ -146,6 +155,8 @@ namespace Looking_Back
             doorOpenInstance = doorOpen.CreateInstance();
             sickInkInstance = sickInk.CreateInstance();
             footStepInstance = footStep.CreateInstance();
+            mumbleTalkInstance = mumbleTalk.CreateInstance();
+            nickTalkInstance = nickTalk.CreateInstance();
             // TODO: use this.Content to load your game content here
         }
 
@@ -239,8 +250,12 @@ namespace Looking_Back
                     if (whiteManRect.Right >= (window.Right - 10))
                     {
                         seconds = 0;
+                        introFade = 0;
                         ptIntro = true;
+                        window = new Rectangle(0, 0, 800, 600);
                         screen = Screen.Animation;
+                        windNum = 1;
+                        mumbleTalkInstance.Play();
                     }
                     for (int y = 0; y < darts.Count; y++) 
                     {
@@ -533,7 +548,30 @@ namespace Looking_Back
                         window = new Rectangle(0, 0, 4000, 600);
                     }
                 }
-
+                else
+                {
+                    ++seconds;
+                    if (introFade < 50)
+                    {
+                        introFade++;
+                    }
+                    
+                    if (seconds == 200)
+                    {
+                        mumbleTalkInstance.Stop();
+                        nickTalkInstance.Play();
+                        windNum = 2;
+                    }
+                    if (nickTalkInstance.State == SoundState.Stopped && windNum == 2)
+                    {
+                        sickInkInstance.Play();
+                        windNum = 3;
+                    }
+                    if (sickInkInstance.State == SoundState.Stopped && windNum == 3)
+                    {
+                        Exit();
+                    }
+                }
 
             }
 
@@ -674,6 +712,30 @@ namespace Looking_Back
                     else if (seconds <= 900)
                     {
                         _spriteBatch.Draw(animationOneFour, window, Color.White * ((100f - (introFade * 2f)) / 100f));
+                    }
+                }
+                else
+                {
+                    if (seconds < 140)
+                    {
+                        _spriteBatch.Draw(aidenText, new Rectangle(250, 0, 300, 600), Color.White * ((introFade * 2) / 100));
+                        if (mumbleTalkInstance.State == SoundState.Playing)
+                        {
+                            _spriteBatch.Draw(speechbubbleText, new Rectangle(50, 200, 250, 70), Color.White);
+                        }
+                         
+                    }
+                    if (seconds >= 140 && seconds < 200)
+                    {
+                        _spriteBatch.Draw(dragonTat, window, Color.White);
+                    }
+                    if (windNum == 2)
+                    {
+                        _spriteBatch.Draw(nickText, window, Color.White);
+                    }
+                    if (windNum == 3)
+                    {
+                        _spriteBatch.Draw(lewisText, window, Color.White);
                     }
                 }
             }
