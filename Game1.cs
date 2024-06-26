@@ -169,7 +169,6 @@ namespace Looking_Back
                 Exit();
             mouseState = Mouse.GetState();
             keyboardState = Keyboard.GetState();
-            Window.Title = mouseState.X + "," + mouseState.Y;
             if (screen == Screen.Start)
             {
                 if (windNum == 1 && windOneInstance.State == SoundState.Stopped)
